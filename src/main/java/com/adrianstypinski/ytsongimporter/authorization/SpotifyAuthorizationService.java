@@ -1,12 +1,10 @@
 package com.adrianstypinski.ytsongimporter.authorization;
 
-import com.adrianstypinski.ytsongimporter.Scope;
-import com.adrianstypinski.ytsongimporter.exepctions.InvalidCodeException;
-import com.adrianstypinski.ytsongimporter.exepctions.NoAttributesProvidedException;
-import com.adrianstypinski.ytsongimporter.exepctions.UserNotFoundException;
+import com.adrianstypinski.ytsongimporter.exceptions.NoAttributesProvidedException;
+import com.adrianstypinski.ytsongimporter.exceptions.UserNotFoundException;
 import com.adrianstypinski.ytsongimporter.model.User;
 import com.adrianstypinski.ytsongimporter.model.UserService;
-import com.adrianstypinski.ytsongimporter.payload.SpotifyResponse;
+import com.adrianstypinski.ytsongimporter.payload.SpotifyTokenResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +22,7 @@ import java.util.Base64;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.adrianstypinski.ytsongimporter.Scope.*;
+import static com.adrianstypinski.ytsongimporter.authorization.SpotifyScope.*;
 import static com.adrianstypinski.ytsongimporter.authorization.SpotifyAuthorizationService.Attribute.*;
 
 @Service
@@ -41,7 +39,7 @@ public class SpotifyAuthorizationService {
     }
 
     public RedirectView getAuthorizationCode() throws NoAttributesProvidedException {
-        Set<Scope> scopes = Set.of(
+        Set<SpotifyScope> scopes = Set.of(
                 PLAYLIST_READ_COLLABORATIVE,
                 PLAYLIST_READ_PRIVATE,
                 PLAYLIST_MODIFY_PRIVATE,
@@ -51,7 +49,7 @@ public class SpotifyAuthorizationService {
         return getRedirectViewToSpotifyCode(scopes);
     }
 
-    public SpotifyResponse getAuthorizationTokenBySecret(String authCode, HttpSession session) throws UserNotFoundException {
+    public SpotifyTokenResponse getAuthorizationTokenBySecret(String authCode, HttpSession session) throws UserNotFoundException {
         // Getting user from session
         User user = (User) session.getAttribute(User.ATTRIBUTE_NAME);
 
@@ -73,7 +71,7 @@ public class SpotifyAuthorizationService {
 
             // Getting response from Spotify API
             log.info("Getting response from Spotify API for {}", user);
-            SpotifyResponse spotifyResponse = restTemplate.postForObject(spotifyTokenAuthUrl, request, SpotifyResponse.class);
+            SpotifyTokenResponse spotifyResponse = restTemplate.postForObject(spotifyTokenAuthUrl, request, SpotifyTokenResponse.class);
 
             user.setSpotifyToken(spotifyResponse);
 
@@ -98,9 +96,9 @@ public class SpotifyAuthorizationService {
         return String.format("Basic %s", Base64.getEncoder().encodeToString(authorizationCode.getBytes()));
     }
 
-    private String prepareScopeAttribute(Set<Scope> scopes) throws NoAttributesProvidedException {
+    private String prepareScopeAttribute(Set<SpotifyScope> scopes) throws NoAttributesProvidedException {
         // Adding all scopes to String
-        Optional<String> attributes = scopes.stream().map(Scope::getScope).reduce((a, b) -> a + " " + b);
+        Optional<String> attributes = scopes.stream().map(SpotifyScope::getScope).reduce((a, b) -> a + " " + b);
         if (attributes.isPresent()) {
             return attributes.get();
         } else {
@@ -118,7 +116,7 @@ public class SpotifyAuthorizationService {
         return params;
     }
 
-    private RedirectView getRedirectViewToSpotifyCode(Set<Scope> scopes) throws NoAttributesProvidedException {
+    private RedirectView getRedirectViewToSpotifyCode(Set<SpotifyScope> scopes) throws NoAttributesProvidedException {
         RedirectView redirectView = new RedirectView(spotifyAuthUrl);
 
         // Adding path variables to url

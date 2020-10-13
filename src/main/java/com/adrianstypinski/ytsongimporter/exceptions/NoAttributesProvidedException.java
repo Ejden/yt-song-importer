@@ -1,4 +1,4 @@
-package com.adrianstypinski.ytsongimporter.exepctions;
+package com.adrianstypinski.ytsongimporter.exceptions;
 
 public class NoAttributesProvidedException extends Exception {
 }

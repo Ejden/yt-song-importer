@@ -1,6 +1,7 @@
 package com.adrianstypinski.ytsongimporter.model;
 
-import com.adrianstypinski.ytsongimporter.payload.SpotifyResponse;
+import com.adrianstypinski.ytsongimporter.payload.SpotifyTokenResponse;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,7 +24,11 @@ public class User {
     private String spotifyAuthCode;
     @Column(length = 1024)
     private String spotifyAuthToken;
+    @Column(length = 1024)
+    private String googleAuthCode;
 
     @Transient
-    private SpotifyResponse spotifyToken;
+    private SpotifyTokenResponse spotifyToken;
+    @Transient
+    private GoogleTokenResponse googleToken;
 }

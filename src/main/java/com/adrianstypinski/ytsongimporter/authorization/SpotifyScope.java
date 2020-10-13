@@ -1,6 +1,6 @@
-package com.adrianstypinski.ytsongimporter;
+package com.adrianstypinski.ytsongimporter.authorization;
 
-public enum Scope {
+public enum SpotifyScope {
     // === IMAGES ===
     UGC_IMAGE_UPLOAD("ugc-image-upload"),
 
@@ -40,7 +40,7 @@ public enum Scope {
 
     private final String scope;
 
-    Scope(String scope) {
+    SpotifyScope(String scope) {
         this.scope = scope;
     }
 
