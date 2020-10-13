@@ -1,13 +1,15 @@
 package com.adrianstypinski.ytsongimporter;
 
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
-
-import static com.adrianstypinski.ytsongimporter.Scope.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Service
 public class SpotifyService {
 
 
+
+    public String acceptSpotifyCode() {
+//        userService.
+        return null;
+    }
 }
