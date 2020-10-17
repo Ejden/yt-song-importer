@@ -4,6 +4,8 @@ import com.adrianstypinski.ytsongimporter.model.User;
 import com.adrianstypinski.ytsongimporter.model.UserBuilder;
 import com.adrianstypinski.ytsongimporter.model.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,10 +18,13 @@ import java.security.NoSuchAlgorithmException;
 @Controller
 public class MainController {
     private final SpotifyService spotifyService;
+    private final YoutubeService youtubeService;
     private final UserService userService;
 
-    public MainController(SpotifyService spotifyService, UserService userService) {
+    @Autowired
+    public MainController(SpotifyService spotifyService, YoutubeService youtubeService, UserService userService) {
         this.spotifyService = spotifyService;
+        this.youtubeService = youtubeService;
         this.userService = userService;
     }
 
@@ -47,8 +52,12 @@ public class MainController {
             session.setAttribute("USER", user);
         }
 
-        return "dashboard";
+        return "dashboard/dashboard";
     }
 
-
+    @GetMapping("youtube/me/playlists")
+    public ResponseEntity<String> getPlaylists(HttpSession session) {
+        User user = (User) session.getAttribute(User.ATTRIBUTE_NAME);
+        return youtubeService.getPlaylists(user.getGoogleToken().getAccessToken());
+    }
 }

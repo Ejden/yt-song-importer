@@ -1,6 +1,7 @@
 package com.adrianstypinski.ytsongimporter.model;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,6 +12,7 @@ import java.util.UUID;
 public class UserService {
     private final UserDao userDao;
 
+    @Autowired
     public UserService(UserDao userDao) {
         this.userDao = userDao;
     }
