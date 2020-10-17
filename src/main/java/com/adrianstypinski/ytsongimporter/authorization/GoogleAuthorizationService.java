@@ -8,6 +8,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -25,6 +26,7 @@ public class GoogleAuthorizationService {
     private final GoogleAuthorizationCodeFlow googleAuthorizationCodeFlow;
     private final UserService userService;
 
+    @Autowired
     public GoogleAuthorizationService(UserService userService) throws GeneralSecurityException, IOException {
         this.googleAuthorizationCodeFlow = new GoogleAuthorizationCodeFlow.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
@@ -75,7 +77,6 @@ public class GoogleAuthorizationService {
                 return "dashboard";
             } catch (IOException e) {
                 log.error("There was an error while sending google token request. \n {}", e.getMessage());
-                e.printStackTrace();
                 return "error";
             }
         } else {
