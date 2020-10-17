@@ -52,7 +52,7 @@ public class MainController {
             session.setAttribute("USER", user);
         }
 
-        return "dashboard";
+        return "dashboard/dashboard";
     }
 
     @GetMapping("youtube/me/playlists")
