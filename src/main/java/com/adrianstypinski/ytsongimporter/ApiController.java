@@ -18,16 +18,12 @@ public class ApiController {
     }
 
     @PutMapping("me/transfer/submit")
-    public void updatePlaylist(HttpSession session,
-                               Model model,
-                               @RequestBody PlaylistTransferRequest requestBody) {
+    public void updatePlaylist(HttpSession session, @RequestBody PlaylistTransferRequest requestBody) {
         log.info(requestBody.toString());
     }
 
     @PostMapping("me/transfer/submit")
-    public void createNewPlaylist(HttpSession session,
-                                  Model model,
-                                  @RequestBody PlaylistTransferRequest requestBody) {
-        log.info(requestBody.toString());
+    public void createNewPlaylist(HttpSession session, @RequestBody PlaylistTransferRequest requestBody) {
+        transferService.transferToNewPlaylist(session, requestBody);
     }
 }

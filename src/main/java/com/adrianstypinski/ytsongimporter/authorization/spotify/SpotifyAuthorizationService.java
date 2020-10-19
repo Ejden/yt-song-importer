@@ -51,7 +51,7 @@ public class SpotifyAuthorizationService {
         return getRedirectViewToSpotifyCode(scopes);
     }
 
-    public SpotifyTokenResponse getAuthorizationTokenBySecret(String authCode, HttpSession session, Model model) throws UserNotFoundException {
+    public SpotifyToken getAuthorizationTokenBySecret(String authCode, HttpSession session, Model model) throws UserNotFoundException {
         // Getting user from session
         User user = (User) session.getAttribute(User.ATTRIBUTE_NAME);
 
@@ -73,7 +73,7 @@ public class SpotifyAuthorizationService {
 
             // Getting response from Spotify API
             log.info("Getting response from Spotify API for {}", user);
-            SpotifyTokenResponse spotifyResponse = restTemplate.postForObject(spotifyTokenAuthUrl, request, SpotifyTokenResponse.class);
+            SpotifyToken spotifyResponse = restTemplate.postForObject(spotifyTokenAuthUrl, request, SpotifyToken.class);
 
             user.setSpotifyToken(spotifyResponse);
             user.setAuthorizedOnSpotify(true);

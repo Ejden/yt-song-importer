@@ -1,6 +1,5 @@
 package com.adrianstypinski.ytsongimporter.authorization.google;
 
-import com.adrianstypinski.ytsongimporter.authorization.google.GoogleScope;
 import com.adrianstypinski.ytsongimporter.model.User;
 import com.adrianstypinski.ytsongimporter.model.UserService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;

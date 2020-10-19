@@ -99,12 +99,12 @@
                     let spotifyPlaylist = this.getSelectedSpotifyPlaylist()[0];
                     console.log(spotifyPlaylist);
 
-                    if (spotifyPlaylist !== null) {
+                    if (spotifyPlaylist !== undefined) {
                         axios.put('/me/transfer/submit',
                         {
                             spotifyPlaylistId: spotifyPlaylist.id,
                             spotifyPlaylistName: spotifyPlaylist.name,
-                            spotifyPlaylistHref: spotifyPlaylist.href,
+                            spotifyPlaylistUri: spotifyPlaylist.uri,
                             youtubePlaylistId: this.selectedYoutubePlaylist.playlistId,
                             youtubePlaylistTitle: this.selectedYoutubePlaylist.playlistTitle,
                             youtubePlaylistCreatorChannelId: this.selectedYoutubePlaylist.channelId,
@@ -116,12 +116,18 @@
                             console.log(error);
                         });
                     } else {
-                        spotifyPlaylist = {name: this.selectedSpotifyPlaylist};
+                        let spotifyPlaylist = {
+                            id: null,
+                            name: this.selectedSpotifyPlaylist,
+                            uri: null
+                        };
+
+                        console.log(spotifyPlaylist);
                         axios.post('/me/transfer/submit',
                         {
                             spotifyPlaylistId: spotifyPlaylist.id,
                             spotifyPlaylistName: spotifyPlaylist.name,
-                            spotifyPlaylistHref: spotifyPlaylist.href,
+                            spotifyPlaylistUri: spotifyPlaylist.uri,
                             youtubePlaylistId: this.selectedYoutubePlaylist.playlistId,
                             youtubePlaylistTitle: this.selectedYoutubePlaylist.playlistTitle,
                             youtubePlaylistCreatorChannelId: this.selectedYoutubePlaylist.channelId,

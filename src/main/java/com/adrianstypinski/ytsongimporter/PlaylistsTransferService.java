@@ -1,6 +1,7 @@
 package com.adrianstypinski.ytsongimporter;
 
 import com.adrianstypinski.ytsongimporter.model.User;
+import com.adrianstypinski.ytsongimporter.payload.PlaylistTransferRequest;
 import com.adrianstypinski.ytsongimporter.payload.YoutubePlaylistItemDto;
 import com.adrianstypinski.ytsongimporter.payload.YoutubePlaylistItemListResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,12 @@ public class PlaylistsTransferService {
         }
     }
 
-    public Collection<YoutubePlaylistItemDto> transferToNewPlaylist() {
+    public Collection<YoutubePlaylistItemDto> transferToNewPlaylist(HttpSession session, PlaylistTransferRequest request) {
+        User user = (User) session.getAttribute(User.ATTRIBUTE_NAME);
+
+        if (user != null) {
+            spotifyService.createPlaylist(request.getSpotifyPlaylistName(), "11181989165", user.getSpotifyToken());
+        }
         return null;
     }
 
