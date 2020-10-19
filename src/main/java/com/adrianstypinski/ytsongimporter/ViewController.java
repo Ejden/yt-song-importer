@@ -5,32 +5,32 @@ import com.adrianstypinski.ytsongimporter.model.UserBuilder;
 import com.adrianstypinski.ytsongimporter.model.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.security.NoSuchAlgorithmException;
 
 @Slf4j
 @Controller
-public class MainController {
+public class ViewController {
     private final SpotifyService spotifyService;
     private final YoutubeService youtubeService;
+    private final PlaylistsTransferService playlistsTransferService;
     private final UserService userService;
 
     @Autowired
-    public MainController(SpotifyService spotifyService, YoutubeService youtubeService, UserService userService) {
+    public ViewController(SpotifyService spotifyService, YoutubeService youtubeService, PlaylistsTransferService playlistsTransferService, UserService userService) {
         this.spotifyService = spotifyService;
         this.youtubeService = youtubeService;
+        this.playlistsTransferService = playlistsTransferService;
         this.userService = userService;
     }
 
     @GetMapping("dashboard")
     public String dashboard(@RequestParam String code) {
-        return "dashboard";
+        return "dashboard/dashboard";
     }
 
     @GetMapping("")
@@ -48,16 +48,15 @@ public class MainController {
         }
 
         if (user != null) {
-            model.addAttribute(user);
+            model.addAttribute(User.ATTRIBUTE_NAME, user.toUserDto());
             session.setAttribute("USER", user);
         }
 
         return "dashboard/dashboard";
     }
 
-    @GetMapping("youtube/me/playlists")
-    public ResponseEntity<String> getPlaylists(HttpSession session) {
-        User user = (User) session.getAttribute(User.ATTRIBUTE_NAME);
-        return youtubeService.getPlaylists(user.getGoogleToken().getAccessToken());
+    @GetMapping("me/transfer")
+    public String showTransferView(HttpSession session, Model model) {
+        return playlistsTransferService.getTransferView(session, model);
     }
 }

@@ -1,11 +1,119 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <title>Dashboard</title>
+    <!-- === BOOTSTRAP === -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <!-- === VUE JS === -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <style type="text/css">
+        .welcome {
+            margin-top: 3%;
+            margin-left: 40%;
+            margin-bottom: 5%;
+        }
+        .text {
+            color: #95c2de;
+        }
+        .welcome-message {
+            color: #C8E0F4;
+
+        }
+        .welcome-message-url:link {
+            color: #C8E0F4;
+        }
+        .welcome-message-url:visited {
+            color: #C8E0F4;
+
+        }
+        .welcome-message-url:hover {
+            color: #C8E0F4;
+            text-decoration: none;
+
+        }
+        .welcome-message-url:active {
+            color: #C8E0F4;
+        }
+        .jumbotron {
+            background: #042539;
+            color: #C8E0F4;
+        }
+        .button {
+            margin-right: 36pt;
+        }
+        .authorization-buttons {
+            margin-top: 20pt;
+        }
+        #app {
+
+        }
+        body {
+            background: #031927;
+        }
+    </style>
+
+
+    <title>Youtube Song Importer</title>
 </head>
 <body>
-    <div id="app"></div>
+    <div id="app" class="container">
+        <div class="welcome">
+            <h4 class="welcome-message"><a class="welcome-message-url" href="dashboard.html">Yt Song Importer</a></h4>
+        </div>
+        <div class="jumbotron">
+            <div class="container">
+                <p>What this application is doing?</p>
+                <p class="lead">This application will let you transfer your YouTube playlist to your Spotify Account!</p>
+                <p>How this works?</p>
+                <p class="lead">Just simply authorize your Spotify and YouTube accounts, pick playlist that you want to transfer and hit transfer button! Don't worry, I'm not storing your passwords anywhere!
+                    If you still don't believe me, just check out code for this <a href="https://github.com/Ejden/yt-song-importer">app</a> on my github! Master branch is always what you're seeing on this site.
+                </p>
+            </div>
+        </div>
+        <p class="text">Authorization progress</p>
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" v-bind:style="{width: progressOnAuthorization + '%'}"></div>
+        </div>
+        <div class="authorization-buttons">
+            <a href="/auth/spotify/requestCode" class="btn btn-success button">Authorize Spotify</a>
+            <a href="/auth/youtube/requestCode" class="btn btn-danger button">Authorize YouTube</a>
+            <a href="/me/transfer" class="btn btn-outline-info button" v-bind:class="{disabled: playlistsButtonDisabled()}">Show my playlists</a>
+        </div>
+
+    </div>
+
+    <script type="application/javascript" th:inline="javascript">
+        let vue = new Vue({
+            el: '#app',
+            data: {
+                user: [[${USER}]]
+            },
+            computed: {
+                progressOnAuthorization() {
+                    let progress = 0;
+
+                    if (this.user.authorizedOnSpotify) {
+                        progress += 50;
+                    }
+
+                    if (this.user.authorizedOnYouTube) {
+                        progress += 50;
+                    }
+
+                    return (progress === 0) ? 3 : progress;
+                }
+
+            },
+            methods: {
+                playlistsButtonDisabled() {
+                    return !(this.progressOnAuthorization === 100);
+                }
+            }
+        });
+    </script>
 </body>
+
 </html>

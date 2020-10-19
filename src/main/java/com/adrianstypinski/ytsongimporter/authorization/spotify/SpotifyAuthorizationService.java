@@ -1,10 +1,9 @@
-package com.adrianstypinski.ytsongimporter.authorization;
+package com.adrianstypinski.ytsongimporter.authorization.spotify;
 
 import com.adrianstypinski.ytsongimporter.exceptions.NoAttributesProvidedException;
 import com.adrianstypinski.ytsongimporter.exceptions.UserNotFoundException;
 import com.adrianstypinski.ytsongimporter.model.User;
 import com.adrianstypinski.ytsongimporter.model.UserService;
-import com.adrianstypinski.ytsongimporter.payload.SpotifyTokenResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +12,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -23,8 +23,8 @@ import java.util.Base64;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.adrianstypinski.ytsongimporter.authorization.SpotifyScope.*;
-import static com.adrianstypinski.ytsongimporter.authorization.SpotifyAuthorizationService.Attribute.*;
+import static com.adrianstypinski.ytsongimporter.authorization.spotify.SpotifyScope.*;
+import static com.adrianstypinski.ytsongimporter.authorization.spotify.SpotifyAuthorizationService.Attribute.*;
 
 @Service
 @Slf4j
@@ -51,7 +51,7 @@ public class SpotifyAuthorizationService {
         return getRedirectViewToSpotifyCode(scopes);
     }
 
-    public SpotifyTokenResponse getAuthorizationTokenBySecret(String authCode, HttpSession session) throws UserNotFoundException {
+    public SpotifyTokenResponse getAuthorizationTokenBySecret(String authCode, HttpSession session, Model model) throws UserNotFoundException {
         // Getting user from session
         User user = (User) session.getAttribute(User.ATTRIBUTE_NAME);
 
@@ -76,9 +76,12 @@ public class SpotifyAuthorizationService {
             SpotifyTokenResponse spotifyResponse = restTemplate.postForObject(spotifyTokenAuthUrl, request, SpotifyTokenResponse.class);
 
             user.setSpotifyToken(spotifyResponse);
+            user.setAuthorizedOnSpotify(true);
 
             userService.saveUser(user);
+
             session.setAttribute(User.ATTRIBUTE_NAME, user);
+            model.addAttribute(User.ATTRIBUTE_NAME, user.toUserDto());
 
             log.info("Updated user {}", user.getId());
 

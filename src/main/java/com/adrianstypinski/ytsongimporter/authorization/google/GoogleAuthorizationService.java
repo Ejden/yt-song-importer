@@ -1,5 +1,6 @@
-package com.adrianstypinski.ytsongimporter.authorization;
+package com.adrianstypinski.ytsongimporter.authorization.google;
 
+import com.adrianstypinski.ytsongimporter.authorization.google.GoogleScope;
 import com.adrianstypinski.ytsongimporter.model.User;
 import com.adrianstypinski.ytsongimporter.model.UserService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
@@ -10,9 +11,9 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class GoogleAuthorizationService {
         );
     }
 
-    public String acceptGoogleAuthCode(HttpServletResponse response, String authCode, HttpSession session) {
+    public String acceptGoogleAuthCode(HttpServletResponse response, String authCode, HttpSession session, Model model) {
         User user = (User) session.getAttribute(User.ATTRIBUTE_NAME);
 
         if (user != null) {
@@ -67,14 +68,17 @@ public class GoogleAuthorizationService {
                 GoogleTokenResponse token = tokenRequest.execute();
 
                 user.setGoogleToken(token);
+                user.setAuthorizedOnYouTube(true);
 
                 // Updating user
                 userService.saveUser(user);
+
                 session.setAttribute(User.ATTRIBUTE_NAME, user);
+                model.addAttribute(User.ATTRIBUTE_NAME, user.toUserDto());
 
                 log.info("Updated user {}", user.getId());
 
-                return "dashboard";
+                return "dashboard/dashboard";
             } catch (IOException e) {
                 log.error("There was an error while sending google token request. \n {}", e.getMessage());
                 return "error";

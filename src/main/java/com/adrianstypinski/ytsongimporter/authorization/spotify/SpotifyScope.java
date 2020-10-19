@@ -1,4 +1,4 @@
-package com.adrianstypinski.ytsongimporter.authorization;
+package com.adrianstypinski.ytsongimporter.authorization.spotify;
 
 public enum SpotifyScope {
     // === IMAGES ===
