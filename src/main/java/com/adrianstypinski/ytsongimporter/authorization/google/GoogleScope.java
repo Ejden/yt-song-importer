@@ -1,4 +1,4 @@
-package com.adrianstypinski.ytsongimporter.authorization;
+package com.adrianstypinski.ytsongimporter.authorization.google;
 
 public enum GoogleScope {
     YOUTUBE_READ_ONLY("https://www.googleapis.com/auth/youtube.readonly");

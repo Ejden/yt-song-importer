@@ -1,4 +1,4 @@
-package com.adrianstypinski.ytsongimporter.payload;
+package com.adrianstypinski.ytsongimporter.authorization.spotify;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

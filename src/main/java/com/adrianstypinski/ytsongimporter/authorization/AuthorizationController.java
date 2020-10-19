@@ -1,10 +1,12 @@
 package com.adrianstypinski.ytsongimporter.authorization;
 
+import com.adrianstypinski.ytsongimporter.authorization.google.GoogleAuthorizationService;
+import com.adrianstypinski.ytsongimporter.authorization.spotify.SpotifyAuthorizationService;
+import com.adrianstypinski.ytsongimporter.authorization.spotify.SpotifyTokenResponse;
 import com.adrianstypinski.ytsongimporter.exceptions.NoAttributesProvidedException;
 import com.adrianstypinski.ytsongimporter.exceptions.UserNotFoundException;
-import com.adrianstypinski.ytsongimporter.payload.SpotifyTokenResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,8 +51,8 @@ public class AuthorizationController {
      * @throws UserNotFoundException when provided code from spotify is wrong or not provided
      */
     @GetMapping("spotify/acceptAuthCode")
-    public String acceptSpotifyCode(HttpServletResponse response, @RequestParam String code, HttpSession session) throws UserNotFoundException {
-        SpotifyTokenResponse spotifyResponse = spotifyAuthService.getAuthorizationTokenBySecret(code, session);
+    public String acceptSpotifyCode(HttpServletResponse response, @RequestParam String code, HttpSession session, Model model) throws UserNotFoundException {
+        SpotifyTokenResponse spotifyResponse = spotifyAuthService.getAuthorizationTokenBySecret(code, session, model);
 
         Cookie accessToken = new Cookie("spotifyAccessToken", spotifyResponse.getAccess_token());
         accessToken.setHttpOnly(true);
@@ -58,7 +60,7 @@ public class AuthorizationController {
 
         response.addCookie(accessToken);
 
-        return "dashboard";
+        return "dashboard/dashboard";
     }
 
     // === GOOGLE AUTHORIZATION ===
@@ -68,7 +70,7 @@ public class AuthorizationController {
     }
 
     @GetMapping("youtube/acceptAuthCode")
-    public String acceptYoutubeCode(HttpServletResponse response, @RequestParam String code, HttpSession session) {
-        return googleAuthorizationService.acceptGoogleAuthCode(response, code, session);
+    public String acceptYoutubeCode(HttpServletResponse response, @RequestParam String code, HttpSession session, Model model) {
+        return googleAuthorizationService.acceptGoogleAuthCode(response, code, session, model);
     }
 }
