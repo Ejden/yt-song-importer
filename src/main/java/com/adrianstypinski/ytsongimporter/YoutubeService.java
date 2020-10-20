@@ -1,7 +1,7 @@
 package com.adrianstypinski.ytsongimporter;
 
-import com.adrianstypinski.ytsongimporter.payload.YoutubePlaylistItemDto;
-import com.adrianstypinski.ytsongimporter.payload.YoutubePlaylistItemListResponse;
+import com.adrianstypinski.ytsongimporter.payload.youtube.YoutubePlaylistItemDto;
+import com.adrianstypinski.ytsongimporter.payload.youtube.YoutubePlaylistItemListResponse;
 import com.adrianstypinski.ytsongimporter.payload.SimplePlaylistItemDtoFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;

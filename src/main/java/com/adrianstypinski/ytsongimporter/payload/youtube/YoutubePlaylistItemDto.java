@@ -1,4 +1,4 @@
-package com.adrianstypinski.ytsongimporter.payload;
+package com.adrianstypinski.ytsongimporter.payload.youtube;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

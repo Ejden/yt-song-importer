@@ -1,9 +1,11 @@
 package com.adrianstypinski.ytsongimporter;
 
 import com.adrianstypinski.ytsongimporter.model.User;
-import com.adrianstypinski.ytsongimporter.payload.PlaylistTransferRequest;
-import com.adrianstypinski.ytsongimporter.payload.YoutubePlaylistItemDto;
-import com.adrianstypinski.ytsongimporter.payload.YoutubePlaylistItemListResponse;
+import com.adrianstypinski.ytsongimporter.payload.*;
+import com.adrianstypinski.ytsongimporter.payload.spotify.PlaylistItem;
+import com.adrianstypinski.ytsongimporter.payload.spotify.SpotifyUserDetails;
+import com.adrianstypinski.ytsongimporter.payload.youtube.YoutubePlaylistItemDto;
+import com.adrianstypinski.ytsongimporter.payload.youtube.YoutubePlaylistItemListResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -27,10 +29,18 @@ public class PlaylistsTransferService {
         User user = (User) session.getAttribute(User.ATTRIBUTE_NAME);
         if (user != null) {
 
+            // Get user playlists from Youtube
             Set<YoutubePlaylistItemDto> youtubePlaylists = youtubeService.getPlaylists(user.getGoogleToken().getAccessToken());
             model.addAttribute(YoutubePlaylistItemListResponse.ATTRIBUTE_NAME, youtubePlaylists);
 
-            model.addAttribute("SPOTIFY_PLAYLISTS", spotifyService.getPlaylists(user.getSpotifyToken().getAccess_token()));
+            // Get user playlists from Spotify
+            Set<PlaylistItem> spotifyPlaylists = spotifyService.getPlaylists(user.getSpotifyToken().getAccess_token());
+            model.addAttribute("SPOTIFY_PLAYLISTS", spotifyPlaylists);
+
+            // Get user details from Spotify and save it in session
+            SpotifyUserDetails userDetails = spotifyService.getUserDetails(user.getSpotifyToken().getAccess_token());
+            user.setSpotifyUserDetails(userDetails);
+            session.setAttribute(User.ATTRIBUTE_NAME, user);
 
             return "playlists/playlists";
         } else {
@@ -43,7 +53,7 @@ public class PlaylistsTransferService {
         User user = (User) session.getAttribute(User.ATTRIBUTE_NAME);
 
         if (user != null) {
-            spotifyService.createPlaylist(request.getSpotifyPlaylistName(), "11181989165", user.getSpotifyToken());
+            spotifyService.createPlaylist(request.getSpotifyPlaylistName(), user.getSpotifyUserDetails().getId(), user.getSpotifyToken());
         }
         return null;
     }

@@ -2,7 +2,6 @@ package com.adrianstypinski.ytsongimporter;
 
 import com.adrianstypinski.ytsongimporter.payload.PlaylistTransferRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;

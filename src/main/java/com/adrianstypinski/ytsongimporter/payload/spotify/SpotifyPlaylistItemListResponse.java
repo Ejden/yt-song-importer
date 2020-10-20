@@ -1,5 +1,6 @@
-package com.adrianstypinski.ytsongimporter.payload;
+package com.adrianstypinski.ytsongimporter.payload.spotify;
 
+import com.adrianstypinski.ytsongimporter.payload.spotify.PlaylistItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
