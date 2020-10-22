@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlaylistItem {
+public class SpotifyPlaylist {
     private String id;
     private String name;
     private String uri;
