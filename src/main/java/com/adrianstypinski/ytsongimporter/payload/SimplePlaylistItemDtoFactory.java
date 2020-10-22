@@ -1,5 +1,8 @@
 package com.adrianstypinski.ytsongimporter.payload;
 
+import com.adrianstypinski.ytsongimporter.payload.youtube.YoutubePlaylistItemDto;
+import com.adrianstypinski.ytsongimporter.payload.youtube.YoutubePlaylistItemListResponse;
+
 public abstract class SimplePlaylistItemDtoFactory {
 
     public static YoutubePlaylistItemDto toPlaylistItemDto(YoutubePlaylistItemListResponse.ItemsBean item) {

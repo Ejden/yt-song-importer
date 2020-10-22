@@ -1,11 +1,13 @@
 package com.adrianstypinski.ytsongimporter;
 
+import com.adrianstypinski.ytsongimporter.exceptions.UserNotFoundException;
 import com.adrianstypinski.ytsongimporter.payload.PlaylistTransferRequest;
+import com.adrianstypinski.ytsongimporter.payload.youtube.YoutubeVideo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.Collection;
 
 @RestController
 @Slf4j
@@ -18,16 +20,17 @@ public class ApiController {
     }
 
     @PutMapping("me/transfer/submit")
-    public void updatePlaylist(HttpSession session,
-                               Model model,
-                               @RequestBody PlaylistTransferRequest requestBody) {
-        log.info(requestBody.toString());
+    public Collection<YoutubeVideo> updatePlaylist(HttpSession session, @RequestBody PlaylistTransferRequest requestBody) throws UserNotFoundException {
+        return transferService.transferToExistingPlaylist(session, requestBody);
     }
 
     @PostMapping("me/transfer/submit")
-    public void createNewPlaylist(HttpSession session,
-                                  Model model,
-                                  @RequestBody PlaylistTransferRequest requestBody) {
-        log.info(requestBody.toString());
+    public Collection<YoutubeVideo> createNewPlaylist(HttpSession session, @RequestBody PlaylistTransferRequest requestBody) throws UserNotFoundException {
+        return transferService.transferToNewPlaylist(session, requestBody);
+    }
+
+    @GetMapping("me/transfer/videos/error")
+    public Collection<YoutubeVideo> getNotTransferredVideos(HttpSession session) {
+        return transferService.getNotTransferredVideos(session);
     }
 }

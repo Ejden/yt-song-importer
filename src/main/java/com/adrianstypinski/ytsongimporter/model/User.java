@@ -1,6 +1,7 @@
 package com.adrianstypinski.ytsongimporter.model;
 
-import com.adrianstypinski.ytsongimporter.authorization.spotify.SpotifyTokenResponse;
+import com.adrianstypinski.ytsongimporter.authorization.spotify.SpotifyToken;
+import com.adrianstypinski.ytsongimporter.payload.spotify.SpotifyUserDetails;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import lombok.*;
 
@@ -26,9 +27,12 @@ public class User {
     private String googleAuthCode;
 
     @Transient
-    private SpotifyTokenResponse spotifyToken;
+    private SpotifyToken spotifyToken;
     @Transient
     private GoogleTokenResponse googleToken;
+
+    @Transient
+    private SpotifyUserDetails spotifyUserDetails;
 
     private boolean authorizedOnSpotify = false;
     private boolean authorizedOnYouTube = false;

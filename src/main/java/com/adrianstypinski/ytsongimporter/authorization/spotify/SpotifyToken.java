@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SpotifyTokenResponse {
+public class SpotifyToken {
     private String access_token;
     private String token_type;
     private String scope;

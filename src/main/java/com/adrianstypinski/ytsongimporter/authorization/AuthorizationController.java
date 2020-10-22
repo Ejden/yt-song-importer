@@ -2,7 +2,7 @@ package com.adrianstypinski.ytsongimporter.authorization;
 
 import com.adrianstypinski.ytsongimporter.authorization.google.GoogleAuthorizationService;
 import com.adrianstypinski.ytsongimporter.authorization.spotify.SpotifyAuthorizationService;
-import com.adrianstypinski.ytsongimporter.authorization.spotify.SpotifyTokenResponse;
+import com.adrianstypinski.ytsongimporter.authorization.spotify.SpotifyToken;
 import com.adrianstypinski.ytsongimporter.exceptions.NoAttributesProvidedException;
 import com.adrianstypinski.ytsongimporter.exceptions.UserNotFoundException;
 import org.springframework.stereotype.Controller;
@@ -52,7 +52,7 @@ public class AuthorizationController {
      */
     @GetMapping("spotify/acceptAuthCode")
     public String acceptSpotifyCode(HttpServletResponse response, @RequestParam String code, HttpSession session, Model model) throws UserNotFoundException {
-        SpotifyTokenResponse spotifyResponse = spotifyAuthService.getAuthorizationTokenBySecret(code, session, model);
+        SpotifyToken spotifyResponse = spotifyAuthService.getAuthorizationTokenBySecret(code, session, model);
 
         Cookie accessToken = new Cookie("spotifyAccessToken", spotifyResponse.getAccess_token());
         accessToken.setHttpOnly(true);

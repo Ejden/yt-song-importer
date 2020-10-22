@@ -15,8 +15,8 @@
 
     <style type="text/css">
         body {
-            background: #031927;
-            color: #95c2de;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #e73c7e, #23a6d5);
+            background-size: 600% 600%;
         }
         .welcome {
             margin-top: 3%;
@@ -75,6 +75,15 @@
 
                         <div class="input">
                             <button @click="transferPlaylist($event)" class="btn btn-outline-light">TRANSFER</button>
+                            <a class="btn btn-primary" v-bind:class="{disabled: !loaded}" href="/me/summary" type="button">
+                                <div v-if="loading">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    <span>Loading...</span>
+                                </div>
+                                <div v-else>
+                                    <span>Summary</span>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </form>
@@ -88,23 +97,29 @@
             el: '#app',
             data: {
                 youtubePlaylists: [[${YOUTUBE_PLAYLISTS}]],
+                // youtubePlaylists: [],
                 selectedYoutubePlaylist: '',
                 spotifyPlaylists: [[${SPOTIFY_PLAYLISTS}]],
-                selectedSpotifyPlaylist: ''
+                // spotifyPlaylists: [],
+                selectedSpotifyPlaylist: '',
+                loaded: false,
+                loading: false,
             },
             methods: {
                 transferPlaylist(event) {
+                    this.loading = true;
+
                     event.preventDefault();
 
                     let spotifyPlaylist = this.getSelectedSpotifyPlaylist()[0];
                     console.log(spotifyPlaylist);
 
-                    if (spotifyPlaylist !== null) {
+                    if (spotifyPlaylist !== undefined) {
                         axios.put('/me/transfer/submit',
                         {
                             spotifyPlaylistId: spotifyPlaylist.id,
                             spotifyPlaylistName: spotifyPlaylist.name,
-                            spotifyPlaylistHref: spotifyPlaylist.href,
+                            spotifyPlaylistUri: spotifyPlaylist.uri,
                             youtubePlaylistId: this.selectedYoutubePlaylist.playlistId,
                             youtubePlaylistTitle: this.selectedYoutubePlaylist.playlistTitle,
                             youtubePlaylistCreatorChannelId: this.selectedYoutubePlaylist.channelId,
@@ -112,16 +127,25 @@
                         }
                         ).then(response => {
                             console.log(response);
+                            this.loading = false;
+                            this.loaded = true;
                         }, error => {
                             console.log(error);
+                            this.loading = false;
                         });
                     } else {
-                        spotifyPlaylist = {name: this.selectedSpotifyPlaylist};
+                        let spotifyPlaylist = {
+                            id: null,
+                            name: this.selectedSpotifyPlaylist,
+                            uri: null
+                        };
+
+                        console.log(spotifyPlaylist);
                         axios.post('/me/transfer/submit',
                         {
                             spotifyPlaylistId: spotifyPlaylist.id,
                             spotifyPlaylistName: spotifyPlaylist.name,
-                            spotifyPlaylistHref: spotifyPlaylist.href,
+                            spotifyPlaylistUri: spotifyPlaylist.uri,
                             youtubePlaylistId: this.selectedYoutubePlaylist.playlistId,
                             youtubePlaylistTitle: this.selectedYoutubePlaylist.playlistTitle,
                             youtubePlaylistCreatorChannelId: this.selectedYoutubePlaylist.channelId,
@@ -129,8 +153,11 @@
                         }
                         ).then(response => {
                             console.log(response);
+                            this.loading = false;
+                            this.loaded = true;
                         }, error => {
                             console.log(error);
+                            this.loading = false;
                         });
                     }
                 },
