@@ -54,12 +54,17 @@ public class PlaylistsTransferService {
         }
     }
 
+    public String getSummaryView(HttpSession session, Model model) {
+        model.addAttribute("NOT_TRANSFERRED_VIDEOS", session.getAttribute("NOT_TRANSFERRED_VIDEOS"));
+        return "summary/summary";
+    }
+
     public Collection<YoutubeVideo> transferToNewPlaylist(HttpSession session, PlaylistTransferRequest request) throws UserNotFoundException {
         User user = (User) session.getAttribute(User.ATTRIBUTE_NAME);
 
         if (user != null) {
             SpotifyPlaylist playlist = spotifyService.createPlaylist(request.getSpotifyPlaylistName(), user.getSpotifyUserDetails().getId(), user.getSpotifyToken());
-            return transferVideos(user, request, playlist);
+            return transferVideos(session, user, request, playlist);
         } else {
             throw new UserNotFoundException();
         }
@@ -70,13 +75,14 @@ public class PlaylistsTransferService {
 
         if (user != null) {
             SpotifyPlaylist playlist = spotifyService.getPlaylist(user.getSpotifyToken(), request.getSpotifyPlaylistId());
-            return transferVideos(user, request, playlist);
+            return transferVideos(session, user, request, playlist);
         } else {
             throw new UserNotFoundException();
         }
     }
 
-    private Collection<YoutubeVideo> transferVideos(User user, PlaylistTransferRequest request, SpotifyPlaylist playlist) {
+    private Collection<YoutubeVideo> transferVideos(HttpSession session, User user, PlaylistTransferRequest request, SpotifyPlaylist playlist) {
+        // Get videos from youtube playlist
         Set<YoutubeVideo> youtubeVideos = youtubeService.getVideos(request.getYoutubePlaylistId(), user.getGoogleToken());
 
         Set<SpotifyTrack> foundTracks = new HashSet<>();
@@ -97,6 +103,18 @@ public class PlaylistsTransferService {
         // Add foundTracks to new created spotify playlist
         foundTracks.forEach(track -> spotifyService.addTrackToPlaylist(user.getSpotifyToken(), playlist.getId(), track.getUri()));
 
+        // Clear previous not transferred videos and add not transferred videos to session memory
+        session.setAttribute("NOT_TRANSFERRED_VIDEOS", notFoundTracks);
+
         return notFoundTracks;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Collection<YoutubeVideo> getNotTransferredVideos(HttpSession session) {
+        return (Set<YoutubeVideo>) session.getAttribute("NOT_TRANSFERRED_VIDEOS");
+    }
+
+    public void removeNotTransferredVideosFromSession(HttpSession session) {
+        session.removeAttribute("NOT_TRANSFERRED_VIDEOS");
     }
 }
