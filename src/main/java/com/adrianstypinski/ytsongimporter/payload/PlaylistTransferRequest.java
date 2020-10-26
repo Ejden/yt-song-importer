@@ -10,9 +10,10 @@ import lombok.Data;
 public class PlaylistTransferRequest {
     private String spotifyPlaylistId;
     private String spotifyPlaylistName;
-    private String spotifyPlaylistExternalUrls;
     private String youtubePlaylistId;
-    private String youtubePlaylistTitle;
-    private String youtubePlaylistCreatorChannelId;
-    private String youtubePlaylistCreatorChannelTitle;
+    private String youtubePlaylistName;
+//    private String youtubePlaylistCreatorChannelId;
+//    private String youtubePlaylistCreatorChannelTitle;3
+//    private String spotifyPlaylistExternalUrls;
+
 }

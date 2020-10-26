@@ -9,16 +9,27 @@
     <!-- === VUE JS === -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
+    <title>Song Importer</title>
+    <link rel="icon" type="image/png" href="../img/favicon.png">
+
     <style type="text/css">
-        .welcome {
-            margin-top: 3%;
-            margin-left: 40%;
-            margin-bottom: 5%;
+        body {
+            background: linear-gradient(-45deg, #ee7752,#ee7752, #e73c7e, #23a6d5);
+            background-size: 300% 300%;
+        }
+        header {
+            text-align: center;
+            padding: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.19);
+        }
+        .site-name {
+
         }
         .text {
             color: #C8E0F4;
         }
         .welcome-message {
+            font-family: "Brush Script MT", cursive; font-size: 49px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 53.9px;
             color: #C8E0F4;
 
         }
@@ -38,54 +49,83 @@
             color: #C8E0F4;
         }
         .jumbotron {
-            /*background: #042539;*/
             background: rgba(255, 255, 255, 0.2);
             color: #C8E0F4;
+            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
         }
         .button {
             margin-right: 36pt;
+            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
         }
         .authorization-buttons {
             margin-top: 20pt;
         }
-        #app {
-
+        .progress{
+            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
         }
-        body {
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #e73c7e, #23a6d5);
-            background-size: 600% 600%;
+        .progress-text-info {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.19);
         }
-
     </style>
-
-
-    <title>Youtube Song Importer</title>
 </head>
 <body>
     <div id="app" class="container">
-        <div class="welcome">
-            <h4 class="welcome-message"><a class="welcome-message-url" href="dashboard.html">Yt Song Importer</a></h4>
-        </div>
+        <header>
+            <div class="site-name">
+                <h4 class="welcome-message"><a class="welcome-message-url" href="dashboard.html">Song Importer</a></h4>
+            </div>
+        </header>
         <div class="jumbotron">
             <div class="container">
-                <p>What this application is doing?</p>
-                <p class="lead">This application will let you transfer your YouTube playlist to your Spotify Account!</p>
-                <p>How this works?</p>
-                <p class="lead">Just simply authorize your Spotify and YouTube accounts, pick playlist that you want to transfer and hit transfer button! Don't worry, I'm not storing your passwords anywhere!
+                <p><h5>What this application is doing?</h5></p>
+                <p class="lead info">This application will let you transfer your YouTube playlist to your Spotify Account!</p>
+                <p><h5>How this works?</h5></p>
+                <p class="lead info">Just simply authorize your Spotify and YouTube accounts, pick playlist that you want to transfer and hit transfer button! Don't worry, I'm not storing your passwords anywhere!
                     If you still don't believe me, just check out code for this <a href="https://github.com/Ejden/yt-song-importer">app</a> on my github! Master branch is always what you're seeing on this site.
                 </p>
             </div>
         </div>
-        <p class="text">Authorization progress</p>
+        <p class="text progress-text-info">Authorization progress</p>
         <div class="progress">
             <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" v-bind:style="{width: progressOnAuthorization + '%'}"></div>
         </div>
         <div class="authorization-buttons">
-            <a href="/auth/spotify/requestCode" class="btn btn-success button">Authorize Spotify</a>
-            <a href="/auth/youtube/requestCode" class="btn btn-danger button">Authorize YouTube</a>
-            <a href="/me/transfer" class="btn btn-outline-info button" v-bind:class="{disabled: playlistsButtonDisabled()}">Show my playlists</a>
+            <a href="/auth/spotify/requestCode" class="btn btn-success button">
+                <span v-if="isAuthorizedOnSpotify" >
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-shield-check" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M5.443 1.991a60.17 60.17 0 0 0-2.725.802.454.454 0 0 0-.315.366C1.87 7.056 3.1 9.9 4.567 11.773c.736.94 1.533 1.636 2.197 2.093.333.228.626.394.857.5.116.053.21.089.282.11A.73.73 0 0 0 8 14.5c.007-.001.038-.005.097-.023.072-.022.166-.058.282-.111.23-.106.525-.272.857-.5a10.197 10.197 0 0 0 2.197-2.093C12.9 9.9 14.13 7.056 13.597 3.159a.454.454 0 0 0-.315-.366c-.626-.2-1.682-.526-2.725-.802C9.491 1.71 8.51 1.5 8 1.5c-.51 0-1.49.21-2.557.491zm-.256-.966C6.23.749 7.337.5 8 .5c.662 0 1.77.249 2.813.525a61.09 61.09 0 0 1 2.772.815c.528.168.926.623 1.003 1.184.573 4.197-.756 7.307-2.367 9.365a11.191 11.191 0 0 1-2.418 2.3 6.942 6.942 0 0 1-1.007.586c-.27.124-.558.225-.796.225s-.526-.101-.796-.225a6.908 6.908 0 0 1-1.007-.586 11.192 11.192 0 0 1-2.417-2.3C2.167 10.331.839 7.221 1.412 3.024A1.454 1.454 0 0 1 2.415 1.84a61.11 61.11 0 0 1 2.772-.815z"/>
+                        <path fill-rule="evenodd" d="M10.854 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 8.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+                    </svg>
+                </span>
+                <span v-else>
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-shield-exclamation" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M5.443 1.991a60.17 60.17 0 0 0-2.725.802.454.454 0 0 0-.315.366C1.87 7.056 3.1 9.9 4.567 11.773c.736.94 1.533 1.636 2.197 2.093.333.228.626.394.857.5.116.053.21.089.282.11A.73.73 0 0 0 8 14.5c.007-.001.038-.005.097-.023.072-.022.166-.058.282-.111.23-.106.525-.272.857-.5a10.197 10.197 0 0 0 2.197-2.093C12.9 9.9 14.13 7.056 13.597 3.159a.454.454 0 0 0-.315-.366c-.626-.2-1.682-.526-2.725-.802C9.491 1.71 8.51 1.5 8 1.5c-.51 0-1.49.21-2.557.491zm-.256-.966C6.23.749 7.337.5 8 .5c.662 0 1.77.249 2.813.525a61.09 61.09 0 0 1 2.772.815c.528.168.926.623 1.003 1.184.573 4.197-.756 7.307-2.367 9.365a11.191 11.191 0 0 1-2.418 2.3 6.942 6.942 0 0 1-1.007.586c-.27.124-.558.225-.796.225s-.526-.101-.796-.225a6.908 6.908 0 0 1-1.007-.586 11.192 11.192 0 0 1-2.417-2.3C2.167 10.331.839 7.221 1.412 3.024A1.454 1.454 0 0 1 2.415 1.84a61.11 61.11 0 0 1 2.772-.815z"/>
+                        <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                    </svg>
+                </span>
+                <span>
+                    Authorize Spotify
+                </span>
+            </a>
+            <a href="/auth/youtube/requestCode" class="btn btn-danger button">
+                <span v-if="isAuthorizedOnYouTube" >
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-shield-check" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M5.443 1.991a60.17 60.17 0 0 0-2.725.802.454.454 0 0 0-.315.366C1.87 7.056 3.1 9.9 4.567 11.773c.736.94 1.533 1.636 2.197 2.093.333.228.626.394.857.5.116.053.21.089.282.11A.73.73 0 0 0 8 14.5c.007-.001.038-.005.097-.023.072-.022.166-.058.282-.111.23-.106.525-.272.857-.5a10.197 10.197 0 0 0 2.197-2.093C12.9 9.9 14.13 7.056 13.597 3.159a.454.454 0 0 0-.315-.366c-.626-.2-1.682-.526-2.725-.802C9.491 1.71 8.51 1.5 8 1.5c-.51 0-1.49.21-2.557.491zm-.256-.966C6.23.749 7.337.5 8 .5c.662 0 1.77.249 2.813.525a61.09 61.09 0 0 1 2.772.815c.528.168.926.623 1.003 1.184.573 4.197-.756 7.307-2.367 9.365a11.191 11.191 0 0 1-2.418 2.3 6.942 6.942 0 0 1-1.007.586c-.27.124-.558.225-.796.225s-.526-.101-.796-.225a6.908 6.908 0 0 1-1.007-.586 11.192 11.192 0 0 1-2.417-2.3C2.167 10.331.839 7.221 1.412 3.024A1.454 1.454 0 0 1 2.415 1.84a61.11 61.11 0 0 1 2.772-.815z"/>
+                        <path fill-rule="evenodd" d="M10.854 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 8.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+                    </svg>
+                </span>
+                <span v-else>
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-shield-exclamation" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M5.443 1.991a60.17 60.17 0 0 0-2.725.802.454.454 0 0 0-.315.366C1.87 7.056 3.1 9.9 4.567 11.773c.736.94 1.533 1.636 2.197 2.093.333.228.626.394.857.5.116.053.21.089.282.11A.73.73 0 0 0 8 14.5c.007-.001.038-.005.097-.023.072-.022.166-.058.282-.111.23-.106.525-.272.857-.5a10.197 10.197 0 0 0 2.197-2.093C12.9 9.9 14.13 7.056 13.597 3.159a.454.454 0 0 0-.315-.366c-.626-.2-1.682-.526-2.725-.802C9.491 1.71 8.51 1.5 8 1.5c-.51 0-1.49.21-2.557.491zm-.256-.966C6.23.749 7.337.5 8 .5c.662 0 1.77.249 2.813.525a61.09 61.09 0 0 1 2.772.815c.528.168.926.623 1.003 1.184.573 4.197-.756 7.307-2.367 9.365a11.191 11.191 0 0 1-2.418 2.3 6.942 6.942 0 0 1-1.007.586c-.27.124-.558.225-.796.225s-.526-.101-.796-.225a6.908 6.908 0 0 1-1.007-.586 11.192 11.192 0 0 1-2.417-2.3C2.167 10.331.839 7.221 1.412 3.024A1.454 1.454 0 0 1 2.415 1.84a61.11 61.11 0 0 1 2.772-.815z"/>
+                        <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                    </svg>
+                </span>
+                <span>
+                    Authorize YouTube
+                </span>
+            </a>
+            <a href="/me/transfer" class="btn btn-outline-light button" v-bind:class="{disabled: playlistsButtonDisabled()}" disabled="true">Transfer</a>
         </div>
-
     </div>
 
     <script type="application/javascript" th:inline="javascript">
@@ -93,6 +133,10 @@
             el: '#app',
             data: {
                 user: [[${USER}]]
+                // user: {
+                //     authorizedOnSpotify: false,
+                //     authorizedOnYouTube: false,
+                // }
             },
             computed: {
                 progressOnAuthorization() {
@@ -107,6 +151,12 @@
                     }
 
                     return (progress === 0) ? 3 : progress;
+                },
+                isAuthorizedOnSpotify() {
+                    return this.user.authorizedOnSpotify;
+                },
+                isAuthorizedOnYouTube() {
+                    return this.user.authorizedOnYouTube;
                 }
 
             },

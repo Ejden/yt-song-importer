@@ -59,29 +59,30 @@ public class PlaylistsTransferService {
         return "summary/summary";
     }
 
-    public Collection<YoutubeVideo> transferToNewPlaylist(HttpSession session, PlaylistTransferRequest request) throws UserNotFoundException {
+
+    public Collection<YoutubeVideo> transferFromYtToNewPlaylist(HttpSession session, PlaylistTransferRequest request) throws UserNotFoundException {
         User user = (User) session.getAttribute(User.ATTRIBUTE_NAME);
 
         if (user != null) {
             SpotifyPlaylist playlist = spotifyService.createPlaylist(request.getSpotifyPlaylistName(), user.getSpotifyUserDetails().getId(), user.getSpotifyToken());
-            return transferVideos(session, user, request, playlist);
+            return transferVideosFromYt(session, user, request, playlist);
         } else {
             throw new UserNotFoundException();
         }
     }
 
-    public Collection<YoutubeVideo> transferToExistingPlaylist(HttpSession session, PlaylistTransferRequest request) throws UserNotFoundException {
+    public Collection<YoutubeVideo> transferFromYtToExistingPlaylist(HttpSession session, PlaylistTransferRequest request) throws UserNotFoundException {
         User user = (User) session.getAttribute(User.ATTRIBUTE_NAME);
 
         if (user != null) {
             SpotifyPlaylist playlist = spotifyService.getPlaylist(user.getSpotifyToken(), request.getSpotifyPlaylistId());
-            return transferVideos(session, user, request, playlist);
+            return transferVideosFromYt(session, user, request, playlist);
         } else {
             throw new UserNotFoundException();
         }
     }
 
-    private Collection<YoutubeVideo> transferVideos(HttpSession session, User user, PlaylistTransferRequest request, SpotifyPlaylist playlist) {
+    private Collection<YoutubeVideo> transferVideosFromYt(HttpSession session, User user, PlaylistTransferRequest request, SpotifyPlaylist playlist) {
         // Get videos from youtube playlist
         Set<YoutubeVideo> youtubeVideos = youtubeService.getVideos(request.getYoutubePlaylistId(), user.getGoogleToken());
 
@@ -116,5 +117,18 @@ public class PlaylistsTransferService {
 
     public void removeNotTransferredVideosFromSession(HttpSession session) {
         session.removeAttribute("NOT_TRANSFERRED_VIDEOS");
+    }
+
+    public Collection<SpotifyTrack> transferFromSpotifyToNewPlaylist(HttpSession session, PlaylistTransferRequest request) throws UserNotFoundException {
+        User user = (User) session.getAttribute(User.ATTRIBUTE_NAME);
+        return null;
+    }
+
+    public Collection<SpotifyTrack> transferFromSpotifyToExistingPlaylist(HttpSession session, PlaylistTransferRequest request) throws UserNotFoundException {
+        return null;
+    }
+
+    private Collection<SpotifyTrack> transferTracksFromSpotify() {
+        return null;
     }
 }

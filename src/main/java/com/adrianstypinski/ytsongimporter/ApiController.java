@@ -19,14 +19,24 @@ public class ApiController {
         this.transferService = transferService;
     }
 
-    @PutMapping("me/transfer/submit")
-    public Collection<YoutubeVideo> updatePlaylist(HttpSession session, @RequestBody PlaylistTransferRequest requestBody) throws UserNotFoundException {
-        return transferService.transferToExistingPlaylist(session, requestBody);
+    @PutMapping("me/transfer/spotify/submit")
+    public Collection<YoutubeVideo> transferFromYoutubeToExistingPlaylist(HttpSession session, @RequestBody PlaylistTransferRequest requestBody) throws UserNotFoundException {
+        return transferService.transferFromYtToExistingPlaylist(session, requestBody);
     }
 
-    @PostMapping("me/transfer/submit")
-    public Collection<YoutubeVideo> createNewPlaylist(HttpSession session, @RequestBody PlaylistTransferRequest requestBody) throws UserNotFoundException {
-        return transferService.transferToNewPlaylist(session, requestBody);
+    @PostMapping("me/transfer/spotify/submit")
+    public Collection<YoutubeVideo> transferFromYoutubeToNewPlaylist(HttpSession session, @RequestBody PlaylistTransferRequest requestBody) throws UserNotFoundException {
+        return transferService.transferFromYtToNewPlaylist(session, requestBody);
+    }
+
+    @PutMapping("me/transfer/youtube/submit")
+    public Collection<String> transferFromSpotifyToExistingPlaylist(HttpSession session, @RequestBody PlaylistTransferRequest requestBody) throws UserNotFoundException {
+        return null;
+    }
+
+    @PostMapping("me/transfer/youtube/submit")
+    public Collection<String> transferFromSpotifyToNewPlaylist(HttpSession session, @RequestBody PlaylistTransferRequest requestBody) throws UserNotFoundException {
+        return null;
     }
 
     @GetMapping("me/transfer/videos/error")

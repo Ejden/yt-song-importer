@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Youtube Song Importer</title>
+    <title>Song Importer</title>
 
     <!-- === BOOTSTRAP === -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
@@ -13,26 +13,33 @@
     <!-- === AXIOS === -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
+    <link rel="icon" type="image/png" href="../img/favicon.png">
+
+
     <style type="text/css">
         body {
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #e73c7e, #23a6d5);
-            background-size: 600% 600%;
+            background: linear-gradient(-45deg, #ee7752,#ee7752, #e73c7e, #23a6d5);
+            background-size: 300% 300%;
         }
-        .welcome {
-            margin-top: 3%;
-            margin-left: 40%;
-            margin-bottom: 5%;
+        header {
+            text-align: center;
+            padding: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.19);
         }
         .welcome-message {
             color: #C8E0F4;
+            font-family: "Brush Script MT", cursive; font-size: 49px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 53.9px;
 
+        }
+        .text {
+            color: #C8E0F4;
+            font-size: 1.25em;
         }
         .welcome-message-url:link {
             color: #C8E0F4;
         }
         .welcome-message-url:visited {
             color: #C8E0F4;
-
         }
         .welcome-message-url:hover {
             color: #C8E0F4;
@@ -44,38 +51,103 @@
         }
         .input {
             margin-top: 10pt;
+            margin-bottom: 3vh;
+        }
+        .input-label {
+            color: #C8E0F4;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.19);
+        }
+        .shadowed-box {
+            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+        .summary-button {
+            position: relative;
+            float: right;
+        }
+        .box-with-opacity {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: #f8f9fa;
+        }
+        .box-with-opacity:focus {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: #f8f9fa;
+        }
+        select option:enabled {
+            color: black;
+        }
+        .direction-button:hover {
+            color: #b0d7f7;
         }
     </style>
 </head>
 <body>
     <div id="app">
-        <div class="welcome">
-            <h4 class="welcome-message"><a class="welcome-message-url" href="/dashboard">Yt Song Importer</a></h4>
-        </div>
+        <header>
+            <div class="site-name">
+                <h4 class="welcome-message"><a class="welcome-message-url" href="/">Song Importer</a></h4>
+            </div>
+        </header>
         <div class="container">
             <div class="container">
                 <form>
                     <div class="col-auto my-1">
+
+                        <!-- Youtube input -->
                         <div class="input">
-                            <label>Pick your youtube playlist that you want to transfer:</label>
-                            <select class="custom-select mr-sm-2" id="inlineFormYoutubeSelect" v-model="selectedYoutubePlaylist">
-                                <option disabled selected>Pick playlist</option>
-                                <option v-for="playlist in youtubePlaylists" v-bind:key="playlist.playlistId" v-bind:value="playlist">{{playlist.playlistTitle}} - {{playlist.channelTitle}}</option>
-                            </select>
+                            <label class="input-label">Pick your youtube playlist that you want to transfer or paste url of playlist:</label>
+                            <div class="input-group mb-3 shadowed-box">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-outline-secondary dropdown-toggle box-with-opacity" style="border: 1px solid #ced4da" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{youtubeMethodMessage}}</button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" @click="selectedMyYoutubePlaylist = true">{{youtubeMethod[0]}}</a>
+                                        <a class="dropdown-item" @click="selectedMyYoutubePlaylist = false">{{youtubeMethod[1]}}</a>
+                                    </div>
+                                </div>
+                                <input v-if="!computedSelectedMyYtPlaylistMethod" type="text" class="form-control box-with-opacity" aria-label="Text input with dropdown button" v-model="providedYoutubePlaylist">
+                                <select v-else class="form-control box box-with-opacity" id="inlineFormYoutubeSelect" v-model="selectedYoutubePlaylist">
+                                        <option disabled selected>Pick playlist</option>
+                                        <option v-for="playlist in youtubePlaylists" v-bind:key="playlist.playlistId" v-bind:value="playlist">{{playlist.playlistTitle}} - {{playlist.channelTitle}}</option>
+                                </select>
+                            </div>
                         </div>
 
-                        <div class="input">
-                            <label>Choose in which playlist on spotify you want to transfer your songs:</label>
-                            <input class="custom-select mr-sm-2" list="inlineFormSpotifySelect" v-model="selectedSpotifyPlaylist"/>
-                            <datalist id="inlineFormSpotifySelect">
-                                <option value="New imported playlist">Create new playlist</option>
-                                <option v-for="playlist in spotifyPlaylists" v-bind:key="playlist.id" v-bind:value="playlist.name">{{playlist.name}}</option>
-                            </datalist>
+                        <!--Transfer switch button-->
+                        <div class="text" style="width: 100%">
+                            <center>
+                                <button class="btn text direction-button" @click="changeImportDirection($event)">
+                                    <svg v-if="fromYtToSpotify" width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-arrow-down-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z"/>
+                                    </svg>
+                                    <svg v-else width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-arrow-up-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z"/>
+                                    </svg>
+                                </button>
+                            </center>
                         </div>
 
+                        <!-- Spotify input -->
                         <div class="input">
-                            <button @click="transferPlaylist($event)" class="btn btn-outline-light">TRANSFER</button>
-                            <a class="btn btn-primary" v-bind:class="{disabled: !loaded}" href="/me/summary" type="button">
+                            <label class="input-label">Choose in which playlist on spotify you want to transfer your songs:</label>
+                            <div class="input-group mb-3 shadowed-box">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-outline-secondary dropdown-toggle box-with-opacity" style="border: 1px solid #ced4da" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{spotifyMethodMessage}}</button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" @click="selectedMySpotifyPlaylist = true">{{spotifyMethod[0]}}</a>
+                                        <a class="dropdown-item" @click="selectedMySpotifyPlaylist = false">{{spotifyMethod[1]}}</a>
+                                    </div>
+                                </div>
+                                <input v-if="!computedSelectedMySpotify" type="text" class="form-control box-with-opacity" aria-label="Text input with dropdown button" v-model="providedSpotifyPlaylist">
+                                <select v-else class="form-control box box-with-opacity" id="inlineFormSpotifySelect" v-model="selectedSpotifyPlaylist">
+                                    <option disabled selected>Pick playlist</option>
+                                    <option v-for="playlist in spotifyPlaylists" v-bind:key="playlist.id" v-bind:value="playlist">{{playlist.name}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="input">
+                            <button @click="transferPlaylist($event)" class="btn btn-outline-light shadowed-box buttons">Transfer</button>
+                            <a class="btn btn-outline-light shadowed-box summary-button buttons" v-bind:class="{disabled: !loaded}" href="/me/summary" type="button">
                                 <div v-if="loading">
                                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                     <span>Loading...</span>
@@ -87,7 +159,6 @@
                         </div>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
@@ -96,11 +167,40 @@
         let vue = new Vue({
             el: '#app',
             data: {
+                importDirectionFromYtToSpotify: true,
+                selectedMyYoutubePlaylist: true,
+                selectedMySpotifyPlaylist: true,
+                providedYoutubePlaylist: '',
                 youtubePlaylists: [[${YOUTUBE_PLAYLISTS}]],
-                // youtubePlaylists: [],
+                // youtubePlaylists: [
+                //     {
+                //         playlistId: 1,
+                //         playlistTitle: 'Example 1',
+                //         channelId: 1,
+                //         channelTitle: 'Channel 1'
+                //     },
+                //     {
+                //         playlistId: 2,
+                //         playlistTitle: 'Example 2',
+                //         channelId: 1,
+                //         channelTitle: 'Channel 2'
+                //     }
+                // ],
                 selectedYoutubePlaylist: '',
+                providedSpotifyPlaylist: '',
                 spotifyPlaylists: [[${SPOTIFY_PLAYLISTS}]],
-                // spotifyPlaylists: [],
+                // spotifyPlaylists: [
+                //     {
+                //         id: 1,
+                //         name: 'Example 1',
+                //         uri: null
+                //     },
+                //     {
+                //         id: 2,
+                //         name: 'Example 2',
+                //         uri: null
+                //     }
+                // ],
                 selectedSpotifyPlaylist: '',
                 loaded: false,
                 loading: false,
@@ -111,20 +211,18 @@
 
                     event.preventDefault();
 
+                    if (this.importDirectionFromYtToSpotify) {
+                        // Import goes from Youtube to Spotify
+                        this.transferFromYtToSpotify();
+                    } else {
+                        // Import goes from Spotify to Youtube
+                        this.transferFromSpotifyToYoutube();
+                    }
+
                     let spotifyPlaylist = this.getSelectedSpotifyPlaylist()[0];
-                    console.log(spotifyPlaylist);
 
                     if (spotifyPlaylist !== undefined) {
-                        axios.put('/me/transfer/submit',
-                        {
-                            spotifyPlaylistId: spotifyPlaylist.id,
-                            spotifyPlaylistName: spotifyPlaylist.name,
-                            spotifyPlaylistUri: spotifyPlaylist.uri,
-                            youtubePlaylistId: this.selectedYoutubePlaylist.playlistId,
-                            youtubePlaylistTitle: this.selectedYoutubePlaylist.playlistTitle,
-                            youtubePlaylistCreatorChannelId: this.selectedYoutubePlaylist.channelId,
-                            youtubePlaylistCreatorChannelTitle: this.selectedYoutubePlaylist.channelTitle
-                        }
+                        axios.put('/me/transfer/spotify/submit', this.getRequestBody()
                         ).then(response => {
                             console.log(response);
                             this.loading = false;
@@ -136,21 +234,10 @@
                     } else {
                         let spotifyPlaylist = {
                             id: null,
-                            name: this.selectedSpotifyPlaylist,
+                            name: this.providedSpotifyPlaylist,
                             uri: null
                         };
-
-                        console.log(spotifyPlaylist);
-                        axios.post('/me/transfer/submit',
-                        {
-                            spotifyPlaylistId: spotifyPlaylist.id,
-                            spotifyPlaylistName: spotifyPlaylist.name,
-                            spotifyPlaylistUri: spotifyPlaylist.uri,
-                            youtubePlaylistId: this.selectedYoutubePlaylist.playlistId,
-                            youtubePlaylistTitle: this.selectedYoutubePlaylist.playlistTitle,
-                            youtubePlaylistCreatorChannelId: this.selectedYoutubePlaylist.channelId,
-                            youtubePlaylistCreatorChannelTitle: this.selectedYoutubePlaylist.channelTitle
-                        }
+                        axios.post('/me/transfer/spotify/submit', this.getRequestBody()
                         ).then(response => {
                             console.log(response);
                             this.loading = false;
@@ -161,10 +248,143 @@
                         });
                     }
                 },
+                transferFromYtToSpotify() {
+
+                },
+                transferFromSpotifyToYoutube() {
+
+                },
+                getRequestBody() {
+                    let requestBody = {
+                        spotifyPlaylistId: null,
+                        spotifyPlaylistName: null,
+                        youtubePlaylistId: null,
+                        youtubePlaylistName: null,
+                    };
+
+                   if (this.importDirectionFromYtToSpotify) {
+                       // User wants to transfer playlist from youtube
+                       this.prepareRequestBodyForYtToSpotifyTransfer(requestBody);
+                   } else {
+                       // User wants to transfer playlist from spotify to youtube
+                       this.prepareRequestBodyForSpotifyToYtTransfer(requestBody);
+                   }
+
+                   return requestBody;
+                },
+                prepareRequestBodyForYtToSpotifyTransfer(requestBody) {
+                    if (this.selectedMyYoutubePlaylist) {
+                        // User selected his playlist from dropdown
+                        if (this.selectedYoutubePlaylist != null) {
+                            requestBody.youtubePlaylistId = this.selectedYoutubePlaylist.playlistId;
+                        } else {
+                            throw 'Not selected Youtube Playlist';
+                        }
+                    } else {
+                        // User provided url to playlist
+                        if (this.providedYoutubePlaylist !== '') {
+                            requestBody.youtubePlaylistId = this.providedYoutubePlaylist;
+                        } else {
+                            throw 'Not provided Youtube playlist url or Youtube playlist name';
+                        }
+                    }
+
+                    if (this.selectedMySpotifyPlaylist) {
+                        // User selected existing spotify Playlist
+                        if (this.selectedSpotifyPlaylist != null) {
+                            requestBody.spotifyPlaylistId = this.selectedSpotifyPlaylist.id;
+                        } else {
+                            throw 'Not selected spotify playlist';
+                        }
+                    } else {
+                        // User provided new spotify playlist name
+                        if (this.providedSpotifyPlaylist !== '') {
+                            requestBody.spotifyPlaylistName = this.providedSpotifyPlaylist;
+                        } else {
+                            throw 'Not provided spotify playlist name';
+                        }
+                    }
+                },
+                prepareRequestBodyForSpotifyToYtTransfer(requestBody) {
+                    if (this.selectedMySpotifyPlaylist) {
+                        // User selected his playlist
+                        if (this.selectedSpotifyPlaylist != null) {
+                            requestBody.spotifyPlaylistId = this.selectedSpotifyPlaylist.id;
+                        } else {
+                            throw 'Not selected any spotify playlist';
+                        }
+                    } else {
+                        // User provided spotify playlist id
+                        if (this.providedSpotifyPlaylist !== '') {
+                            requestBody.spotifyPlaylistId = this.providedSpotifyPlaylist;
+                        } else {
+                            throw 'Not provided spotify playlist id';
+                        }
+                    }
+
+                    if (this.selectedMyYoutubePlaylist) {
+                        // User selected existing youtube playlist
+                        if (this.selectedYoutubePlaylist != null) {
+                            requestBody.youtubePlaylistId = this.selectedYoutubePlaylist.playlistId;
+                        } else {
+                            throw 'Not selected any youtube playlist';
+                        }
+                    } else {
+                        // User provided new playlist name
+                        if (this.providedYoutubePlaylist !== '') {
+                            requestBody.youtubePlaylistName = this.providedYoutubePlaylist;
+                        } else {
+                            throw 'Not provided playlist url or id';
+                        }
+                    }
+                },
                 getSelectedSpotifyPlaylist() {
                     return this.spotifyPlaylists.filter(e => {
                         if (e.name === this.selectedSpotifyPlaylist) return e;
                     });
+                },
+                changeImportDirection(event) {
+                    event.preventDefault();
+                    this.importDirectionFromYtToSpotify = !this.importDirectionFromYtToSpotify;
+                }
+            },
+            computed: {
+                youtubeMethodMessage() {
+                    if (this.importDirectionFromYtToSpotify) {
+                        return (this.selectedMyYoutubePlaylist) ? 'My playlist: ' : 'https://www.youtube.com/watch?v= ';
+                    } else {
+                        return (this.selectedMyYoutubePlaylist) ? 'Playlist Name: ' : 'New playlist name: ';
+                    }
+                },
+                spotifyMethodMessage() {
+                    if (this.importDirectionFromYtToSpotify) {
+                        return (this.selectedMySpotifyPlaylist) ? 'Existing playlist: ' : 'New playlist name:  ';
+                    } else {
+                        return (this.selectedMySpotifyPlaylist) ? 'Playlist Name: ' : 'spotify:playlist: ';
+                    }
+                },
+                youtubeMethod() {
+                    if (this.importDirectionFromYtToSpotify) {
+                        return ['My playlist ', 'Playlist URL '];
+                    } else {
+                        return ['Existing playlist ', 'New playlist '];
+                    }
+                },
+                spotifyMethod() {
+                    if (this.importDirectionFromYtToSpotify) {
+                        return ['Existing playlist ', 'New playlist '];
+                    } else {
+                        return ['My playlist ', 'Playlist URI '];
+                    }
+                },
+                computedSelectedMyYtPlaylistMethod() {
+                    return this.selectedMyYoutubePlaylist;
+                },
+                computedSelectedMySpotify() {
+                    return this.selectedMySpotifyPlaylist;
+                },
+                fromYtToSpotify() {
+                    return this.importDirectionFromYtToSpotify;
                 }
             }
         });
