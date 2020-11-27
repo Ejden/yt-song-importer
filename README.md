@@ -4,7 +4,7 @@ Open source web app that will help you import your playlists between Spotify and
 Check the live app [here](https://yt-song-importer.herokuapp.com/). Note that this app is working on a free heroku server, so it
 can be loading for up to 15 seconds.
 
-##Table of Contents
+## Table of Contents
 * [General info](#general-info)
 * [Screenshots](#screenshots)
 * [Technologies](#technologies)
@@ -12,17 +12,17 @@ can be loading for up to 15 seconds.
 * [Setup](#setup)
 * [Status](#status)
 
-##General info
+## General info
 This app contains backend and frontend as a singleton application. For simplicity thymeleaf is only used for getting 
 data from backend to frontend. 
 
 User data such as email, account name, password or any other sensitive data are not stored anywhere.
 This app only uses tokens which are stored in session. Each user is identified by sessionId cookie. 
 
-##Screenshots
+## Screenshots
 ![Dashboard screenshot](img/dashboard.png)
 
-##Technologies
+## Technologies
 * Java 11
 * Spring Boot - ver 2.3.3
 * Google Api Client - ver 1.30.10
@@ -32,14 +32,14 @@ This app only uses tokens which are stored in session. Each user is identified b
 * VueJS - newest version
 * Bootstrap - ver 4.5.3
 
-##Features
+## Features
 List of working features:
 * Transferring playlists from Youtube to Spotify
 
 Not implemented yet:
 * Transferring playlists from Spotify to Youtube
 
-##Setup
+## Setup
 To run this app locally download source code:
 `git clone https://github.com/Ejden/yt-song-importer`
 
@@ -55,5 +55,5 @@ YOUTUBE_CLIENT_SECRET=-enter-your-youtube-api-client-secret
 YOUTUBE_REDIRECT_URI=http://localhost/auth/youtube/acceptAuthCode
 `
 
-##Status
+## Status
 Project in progress - Due to limited free time new version are released slowly
