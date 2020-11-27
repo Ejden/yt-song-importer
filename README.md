@@ -1,4 +1,4 @@
-# Song Importer
+# Song Importer ![master_badge](https://img.shields.io/travis/Ejden/yt-song-importer/master)
 Open source web app that will help you import your playlists between Spotify and Youtube.
 
 Check the live app [here](https://yt-song-importer.herokuapp.com/). Note that this app is working on a free heroku server, so it
