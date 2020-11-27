@@ -1,13 +1,13 @@
-package com.adrianstypinski.ytsongimporter;
+//package com.adrianstypinski.ytsongimporter;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 //@SpringBootTest
-class YtSongImporterApplicationTests {
-
-//    @Test
-    void contextLoads() {
-    }
-
-}
+//class YtSongImporterApplicationTests {
+//
+////    @Test
+//    void contextLoads() {
+//    }
+//
+//}
