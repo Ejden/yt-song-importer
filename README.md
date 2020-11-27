@@ -45,7 +45,7 @@ To run this app locally download source code:
 
 To successfully run this application you have to provide env file. Here's the example:
 
-`
+````
 SPOTIFY_CLIENT_ID=enter-your-spotify-api-client-id
 REDIRECT_URI=http://localhost:80/auth/spotify/acceptAuthCode
 SPOTIFY_CLIENT_SECRET=enter-your-spotify-api-client-secret
@@ -53,7 +53,7 @@ YOUTUBE_AUTH_KEY=enter-your-youtube-auth-key
 YOUTUBE_CLIENT_ID=enter-your-youtube-api-client-id
 YOUTUBE_CLIENT_SECRET=-enter-your-youtube-api-client-secret
 YOUTUBE_REDIRECT_URI=http://localhost/auth/youtube/acceptAuthCode
-`
+````
 
 ## Status
 Project in progress - Due to limited free time new version are released slowly
